@@ -71,10 +71,9 @@ Built with search engine optimization in mind to help your clients' businesses g
 Ready to bring your business online with a professional website?
 
 ### 💬 **Contact Me**
-- **Email**: [your-email@domain.com]
-- **Portfolio**: [your-portfolio-website.com]
-- **LinkedIn**: [your-linkedin-profile]
-- **Phone**: [your-phone-number]
+- **Email**: [elijah5003@gmail.com]
+- **Portfolio**: [elijahfarrell.com]
+- **Phone**: [(315) 804-0601]
 
 ### 💡 **Free Consultation**
 I offer free consultations to discuss your project needs and provide accurate quotes. Let's build something amazing together!
@@ -87,4 +86,4 @@ This is a **commercial template** available through our web design services. [Vi
 
 **For Clients:** Upon purchase, you receive full ownership rights to your customized code with no restrictions.
 
----# barbershop-template
+---
