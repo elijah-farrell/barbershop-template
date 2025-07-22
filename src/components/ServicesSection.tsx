@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 interface Service {
   name: string;
   price: string;

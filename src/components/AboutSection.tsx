@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 export default function AboutSection() {
   return (
     <section id="about" className="py-20 bg-[#1a1a1a]">

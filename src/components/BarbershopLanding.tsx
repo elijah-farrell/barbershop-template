@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Navigation from "./Navigation";
 import HeroSection from "./HeroSection";
 import ServicesSection from "./ServicesSection";

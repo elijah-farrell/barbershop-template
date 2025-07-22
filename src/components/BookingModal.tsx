@@ -30,7 +30,7 @@ interface BookingModalProps {
 }
 
 export default function BookingModal({
-  selectedService,
+  selectedService: _selectedService,
   bookingStep,
   bookingData,
   setBookingData,

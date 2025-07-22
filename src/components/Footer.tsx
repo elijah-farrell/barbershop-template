@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 export default function Footer() {
   return (
     <footer className="bg-[#0a0a0a] py-12 border-t border-[#444]">
