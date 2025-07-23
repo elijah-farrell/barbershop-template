@@ -9,6 +9,7 @@ import TestimonialsSection from "./TestimonialsSection";
 import ContactSection from "./ContactSection";
 import Footer from "./Footer";
 import BookingModal from "./BookingModal";
+import InfiniteGallery from "./InfiniteGallery";
 
 interface Service {
   name: string;
@@ -41,29 +42,50 @@ export default function BarbershopLanding() {
 
   const services: Service[] = [
     {
-      name: "Classic Haircut",
-      price: "$25",
-      duration: "30 min",
-      description: "Traditional scissor cut with styling",
-    },
-    {
-      name: "Beard Trim",
-      price: "$15",
-      duration: "20 min",
-      description: "Professional beard shaping and trim",
-    },
-    {
-      name: "Hot Towel Shave",
-      price: "$35",
+      name: "Classic Gentleman's Cut",
+      price: "$28",
       duration: "45 min",
-      description: "Traditional straight razor shave with hot towel",
+      description: "Traditional scissor cut with hot towel finish, beard trim, and styling consultation",
     },
     {
-      name: "Haircut + Beard",
-      price: "$35",
-      duration: "45 min",
-      description: "Complete grooming package",
+      name: "Father & Son Package",
+      price: "$45",
+      duration: "60 min",
+      description: "Two complete haircuts - perfect bonding time while both get the full gentleman's treatment",
     },
+    {
+      name: "The Executive",
+      price: "$55",
+      duration: "75 min",
+      description: "Premium cut, hot towel shave, beard sculpting, eyebrow trim, and luxury styling products",
+    },
+    {
+      name: "Quick Trim & Go",
+      price: "$20",
+      duration: "25 min",
+      description: "Fast, professional cut for the busy professional - clean lines, no fuss",
+    },
+    {
+      name: "Wedding Party Special",
+      price: "$40",
+      duration: "50 min",
+      description: "Complete grooming for your big day - precision cut, hot shave, and premium styling",
+    },
+    {
+      name: "Vintage Barber Experience",
+      price: "$65",
+      duration: "90 min",
+      description: "The full old-school treatment - cut, straight razor shave, hot towels, scalp massage, and beard oil",
+    },
+  ];
+
+  const additionalServices = [
+    { name: "Beard Oil Treatment", price: "$8" },
+    { name: "Hot Towel Add-on", price: "$5" },
+    { name: "Eyebrow Trim", price: "$6" },
+    { name: "Scalp Massage", price: "$10" },
+    { name: "Premium Product Styling", price: "$7" },
+    { name: "Mustache Wax", price: "$4" },
   ];
 
   const openBooking = (service: Service | null) => {
@@ -105,7 +127,8 @@ export default function BarbershopLanding() {
     <div className="min-h-screen w-full bg-[#1a1a1a] font-[Inter]">
       <Navigation onBookingOpen={() => openBooking(null)} />
       <HeroSection onBookingOpen={() => openBooking(null)} />
-      <ServicesSection services={services} onServiceSelect={openBooking} />
+      <ServicesSection services={services} additionalServices={additionalServices} onServiceSelect={openBooking} />
+      <InfiniteGallery />
       <AboutSection />
       <TestimonialsSection />
       <ContactSection onBookingOpen={() => openBooking(null)} />
