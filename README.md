@@ -2,25 +2,8 @@
 
 A premium, responsive barbershop website template showcasing modern web design principles for the best user experience. 
 
-## 🌟 **Live Demo**
-[View Live Site](#) <!-- Add your GitHub Pages URL here -->
-
-## ✨ **Features**
-
-### 🎨 **Design & User Experience**
-- **Modern Dark Theme** with premium gold accents
-- **Fully Responsive** design (mobile, tablet, desktop)
-- **Smooth Animations** and hover effects
-- **Image Carousel** with auto-play functionality
-- **Professional Typography** using Google Fonts (Inter)
-
-### 🛠️ **Functionality**
-- **Interactive Booking System** with multi-step modal
-- **Service Showcase** with pricing and descriptions
-- **Customer Testimonials** section
-- **Contact Information** and location details
-- **Smooth Scrolling** navigation
-- **Mobile-First** responsive design
+## **Live Demo**
+[View Live Site](#https://elijah-farrell.github.io/barbershop-template/)
 
 ### ⚡ **Technical Stack**
 - **React 18** with TypeScript
@@ -28,13 +11,7 @@ A premium, responsive barbershop website template showcasing modern web design p
 - **Tailwind CSS** for modern styling
 - **Responsive Design** principles
 - **SEO Optimized** structure
-- **Performance Optimized** assets
-
-## 🎯 **Perfect For**
-- Barbershops & Hair Salons
-- Beauty Services
-- Local Service Businesses
-- Professional Service Providers
+- **Performance Optimized** assets 
 
 ---
 
@@ -45,8 +22,6 @@ This template showcases our web development capabilities. We offer custom websit
 ### 📦 **Service Packages**
 
 **💰 [View Current Pricing & Packages →]()**
-
-**🛠️ [Technical Setup Guide →](SETUP.md)** - For developers and technical implementation
 
 ---
 
@@ -78,6 +53,7 @@ Ready to bring your business online with a professional website?
 ### 💡 **Free Consultation**
 I offer free consultations to discuss your project needs and provide accurate quotes. Let's build something amazing together!
 
+**🛠️ [Technical Setup Guide →](SETUP.md)** - For developers and technical implementation
 ---
 
 ## 📄 **License**
@@ -85,5 +61,11 @@ I offer free consultations to discuss your project needs and provide accurate qu
 This is a **commercial template** available through our web design services. [View License](LICENSE) for details.
 
 **For Clients:** Upon purchase, you receive full ownership rights to your customized code with no restrictions.
+
+## 🖼️ **Image Attribution**
+
+- **Stock Images**: Some images from Shopify Burst (free license) for demonstration
+- **Important**: Stock images are **not included** in website sale and should be replaced with client's own photos
+- **License**: Shopify Burst images are free for commercial use but cannot be sold as digital files
 
 ---

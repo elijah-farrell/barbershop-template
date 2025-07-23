@@ -6,8 +6,6 @@ export default function InfiniteGallery() {
   const [isPaused, setIsPaused] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Cleanup: ensure body scroll is restored if component unmounts while modal is open
@@ -19,43 +17,50 @@ export default function InfiniteGallery() {
 
   const galleryItems = [
     {
-      image: "./beard-trimming.png",
+      image: "./beard-trimming.jpg",
       title: "Beard Styling",
       description: "Expert beard trimming and shaping with precision tools and techniques for the perfect look."
     },
     {
-      image: "https://images.unsplash.com/photo-1542296332-2e4473faf563?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "./classic-barbering.jpg",
       title: "Classic Barbering",
       description: "Traditional barbering methods combined with modern styling for timeless results."
     },
     {
-      image: "https://images.unsplash.com/photo-1567128405941-bd4c47b5e3f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "./hair-styling.jpg",
       title: "Hair Styling",
       description: "Professional hair styling and finishing touches using premium products and techniques."
     },
     {
-      image: "https://images.unsplash.com/photo-1615289985518-c3ca5e0a93b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "./grooming-service.jpg",
       title: "Grooming Service",
       description: "Complete grooming packages tailored to your personal style and preferences."
     },
     {
-      image: "https://images.unsplash.com/photo-1622296089863-eb7fc530daa8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+      image: "./professional-cut.jpg",
       title: "Professional Cut",
       description: "Precision cuts with attention to detail and personalized consultation for every client."
-    },
-    {
-      image: "https://images.unsplash.com/photo-1600298881974-6be191ceeda1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
-      title: "Traditional Shave",
-      description: "Authentic straight razor shaves with hot towel treatment for the ultimate experience."
     }
   ];
 
   // Triple the items for seamless infinite scroll
   const infiniteItems = [...galleryItems, ...galleryItems, ...galleryItems];
 
+  // Initialize scroll position to middle for infinite scroll
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const container = containerRef.current;
+    const cardWidth = 320 + 24; // 320px card + 24px gap
+    const singleSetWidth = galleryItems.length * cardWidth;
+    
+    // Set initial position to the middle set to allow scrolling in both directions
+    container.scrollLeft = singleSetWidth;
+  }, [galleryItems.length]);
+
   // Auto-scroll effect for infinite scroll (slower speed)
   useEffect(() => {
-    if (!containerRef.current || isPaused || isDragging) return;
+    if (!containerRef.current || isPaused) return;
 
     const container = containerRef.current;
     const cardWidth = 320 + 24; // 320px card + 24px gap
@@ -73,8 +78,8 @@ export default function InfiniteGallery() {
       container.scrollLeft += speed * deltaTime;
 
       // Reset scroll position when we've scrolled past one full set
-      if (container.scrollLeft >= singleSetWidth) {
-        container.scrollLeft -= singleSetWidth;
+      if (container.scrollLeft >= singleSetWidth * 2) {
+        container.scrollLeft = singleSetWidth;
       }
 
       animationId = requestAnimationFrame(animate);
@@ -87,11 +92,11 @@ export default function InfiniteGallery() {
         cancelAnimationFrame(animationId);
       }
     };
-  }, [isPaused, isDragging, galleryItems.length]);
+  }, [isPaused, galleryItems.length]);
 
-  // Handle infinite scroll when dragging
+  // Handle infinite scroll
   useEffect(() => {
-    if (!containerRef.current || !isDragging) return;
+    if (!containerRef.current) return;
 
     const container = containerRef.current;
     const cardWidth = 320 + 24; // 320px card + 24px gap
@@ -107,7 +112,7 @@ export default function InfiniteGallery() {
 
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
-  }, [isDragging, galleryItems.length]);
+  }, [galleryItems.length]);
 
   const closeModal = () => {
     setSelectedItem(null);
@@ -118,7 +123,6 @@ export default function InfiniteGallery() {
   };
 
   const openModal = (item: any, index: number) => {
-    if (isDragging) return; // Don't open modal if we're dragging
     setSelectedItem(item);
     setSelectedIndex(index);
     setIsPaused(true);
@@ -138,100 +142,35 @@ export default function InfiniteGallery() {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [selectedItem]);
 
-  const handleMouseEnter = () => {
-    if (!selectedItem && !isDragging) {
-      setIsPaused(true);
+  const handleGalleryClick = () => {
+    if (!selectedItem) {
+      setIsPaused(!isPaused);
     }
   };
 
-  const handleMouseLeave = () => {
-    if (!selectedItem && !isDragging) {
-      setIsPaused(false);
-    }
-  };
 
-  // Improved drag functionality
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsDragging(true);
-    setIsPaused(true);
-    
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const scrollLeft = containerRef.current?.scrollLeft || 0;
-    
-    setDragStart({
-      x: clientX,
-      scrollLeft: scrollLeft
-    });
-  };
-
-  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging || !containerRef.current) return;
-    
-    e.preventDefault();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const walk = (clientX - dragStart.x) * 2; // Multiply by 2 for faster scrolling
-    containerRef.current.scrollLeft = dragStart.scrollLeft - walk;
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-    // Small delay before allowing pause to resume
-    setTimeout(() => {
-      setIsPaused(false);
-    }, 100);
-  };
-
-  // Arrow navigation that respects infinite scroll
-  const scrollLeft = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollBy({
-        left: -344, // Scroll by one card width + gap
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  const scrollRight = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollBy({
-        left: 344, // Scroll by one card width + gap
-        behavior: 'smooth'
-      });
-    }
-  };
 
   return (
     <section className="py-20 bg-gradient-to-br from-[#1a1a1a] to-[#2a2a2a] overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 max-sm:px-2">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl max-sm:text-3xl font-bold text-[#fff] mb-4">
-            Our Work Speaks
-          </h2>
-          <p className="text-xl text-[#ccc] max-w-2xl mx-auto">
-            Experience the artistry and precision that sets North Country Cuts apart
-          </p>
-        </div>
+                 <div className="text-center mb-16">
+           <h2 className="text-4xl max-sm:text-3xl font-bold text-[#fff] mb-4">
+             Our Work Speaks
+           </h2>
+           <p className="text-xl text-[#ccc] max-w-2xl mx-auto mb-4">
+             Experience the artistry and precision that sets North Country Cuts apart
+           </p>
+                       <div 
+              className="flex items-center justify-center gap-2 text-sm text-[#888] cursor-pointer hover:text-[#d4af37] transition-colors duration-300"
+              onClick={handleGalleryClick}
+            >
+              <div className={`w-2 h-2 rounded-full transition-colors duration-300 ${isPaused ? 'bg-[#d4af37]' : 'bg-[#444]'}`} />
+              <span>{isPaused ? 'Paused - Click to resume' : 'Click to pause'}</span>
+            </div>
+         </div>
         
-        {/* Infinite Scrollable Gallery with External Navigation */}
-        <div className="relative max-w-6xl mx-auto">
-          {/* External Navigation arrows */}
-          <button
-            onClick={scrollLeft}
-            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl max-md:hidden"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          
-          <button
-            onClick={scrollRight}
-            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl max-md:hidden"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+                 {/* Infinite Scrollable Gallery */}
+         <div className="relative max-w-6xl mx-auto">
 
           {/* Gallery container with gradient masks */}
           <div className="relative overflow-hidden rounded-xl">
@@ -239,24 +178,16 @@ export default function InfiniteGallery() {
             <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-[#1a1a1a] to-transparent pointer-events-none z-10" />
             <div className="absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-[#2a2a2a] to-transparent pointer-events-none z-10" />
             
-            {/* Infinite scroll container */}
-            <div 
-              ref={containerRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing px-32 py-4"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              onMouseDown={handleDragStart}
-              onMouseMove={handleDragMove}
-              onMouseUp={handleDragEnd}
-              onTouchStart={handleDragStart}
-              onTouchMove={handleDragMove}
-              onTouchEnd={handleDragEnd}
-              style={{ 
-                userSelect: 'none',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
-              }}
-            >
+                         {/* Infinite scroll container */}
+                                                       <div 
+                 ref={containerRef}
+                 className="flex gap-6 overflow-x-auto scrollbar-hide px-32 py-4"
+                 style={{ 
+                   userSelect: 'none',
+                   scrollbarWidth: 'none',
+                   msOverflowStyle: 'none'
+                 }}
+               >
               {infiniteItems.map((item, index) => {
                 const actualIndex = index % galleryItems.length;
                 const isSelected = selectedIndex !== null && actualIndex === (selectedIndex % galleryItems.length);
@@ -293,37 +224,23 @@ export default function InfiniteGallery() {
                         </svg>
                       </div>
                     </div>
-                    <div className="p-6">
-                      <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${
-                        isSelected ? 'text-[#d4af37]' : 'text-[#fff] group-hover:text-[#d4af37]'
-                      }`}>
-                        {item.title}
-                      </h3>
-                      <p className="text-[#ccc] text-sm leading-relaxed line-clamp-2">
-                        {item.description}
-                      </p>
-                    </div>
+                                         <div className="p-6">
+                       <h3 className={`text-xl font-bold mb-3 transition-colors duration-300 ${
+                         isSelected ? 'text-[#d4af37]' : 'text-[#fff] group-hover:text-[#d4af37]'
+                       }`}>
+                         {item.title}
+                       </h3>
+                       <p className="text-[#ccc] text-sm leading-relaxed">
+                         {item.description}
+                       </p>
+                     </div>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Mobile navigation hints */}
-          <div className="md:hidden flex justify-center mt-6 gap-4">
-            <button
-              onClick={scrollLeft}
-              className="bg-[#d4af37] text-[#1a1a1a] px-4 py-2 rounded-lg opacity-80 hover:opacity-100 transition-all duration-300"
-            >
-              ← Previous
-            </button>
-            <button
-              onClick={scrollRight}
-              className="bg-[#d4af37] text-[#1a1a1a] px-4 py-2 rounded-lg opacity-80 hover:opacity-100 transition-all duration-300"
-            >
-              Next →
-            </button>
-          </div>
+          
         </div>
 
         {/* Floating elements for extra flair */}

@@ -10,6 +10,7 @@ export default function HeroSection({ onBookingOpen }: HeroSectionProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const images = [
+    "./a-lite-up-barbers-pole.jpg",
     "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     "https://images.unsplash.com/photo-1621605815971-fbc98d665033?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
