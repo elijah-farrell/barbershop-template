@@ -9,7 +9,6 @@ export default function InfiniteGallery() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
-  const scrollRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,8 +55,64 @@ export default function InfiniteGallery() {
     }
   ];
 
-  // Duplicate items for seamless infinite scroll
-  const duplicatedItems = [...galleryItems, ...galleryItems];
+  // Triple the items for seamless infinite scroll
+  const infiniteItems = [...galleryItems, ...galleryItems, ...galleryItems];
+
+  // Auto-scroll effect for infinite scroll (slower speed)
+  useEffect(() => {
+    if (!containerRef.current || isPaused || isDragging) return;
+
+    const container = containerRef.current;
+    const cardWidth = 320 + 24; // 320px card + 24px gap
+    const singleSetWidth = galleryItems.length * cardWidth;
+    
+    let animationId: number;
+    let lastTime = 0;
+    const speed = 0.15; // Much slower speed - was 0.5, now 0.15
+
+    const animate = (currentTime: number) => {
+      if (lastTime === 0) lastTime = currentTime;
+      const deltaTime = currentTime - lastTime;
+      lastTime = currentTime;
+
+      container.scrollLeft += speed * deltaTime;
+
+      // Reset scroll position when we've scrolled past one full set
+      if (container.scrollLeft >= singleSetWidth) {
+        container.scrollLeft -= singleSetWidth;
+      }
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, [isPaused, isDragging, galleryItems.length]);
+
+  // Handle infinite scroll when dragging
+  useEffect(() => {
+    if (!containerRef.current || !isDragging) return;
+
+    const container = containerRef.current;
+    const cardWidth = 320 + 24; // 320px card + 24px gap
+    const singleSetWidth = galleryItems.length * cardWidth;
+
+    const handleScroll = () => {
+      if (container.scrollLeft <= 0) {
+        container.scrollLeft = singleSetWidth;
+      } else if (container.scrollLeft >= singleSetWidth * 2) {
+        container.scrollLeft = singleSetWidth;
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [isDragging, galleryItems.length]);
 
   const closeModal = () => {
     setSelectedItem(null);
@@ -131,11 +186,11 @@ export default function InfiniteGallery() {
     }, 100);
   };
 
-  // Proper arrow navigation
+  // Arrow navigation that respects infinite scroll
   const scrollLeft = () => {
     if (containerRef.current) {
       containerRef.current.scrollBy({
-        left: -400, // Scroll by roughly one card width
+        left: -344, // Scroll by one card width + gap
         behavior: 'smooth'
       });
     }
@@ -144,7 +199,7 @@ export default function InfiniteGallery() {
   const scrollRight = () => {
     if (containerRef.current) {
       containerRef.current.scrollBy({
-        left: 400, // Scroll by roughly one card width
+        left: 344, // Scroll by one card width + gap
         behavior: 'smooth'
       });
     }
@@ -155,51 +210,44 @@ export default function InfiniteGallery() {
       <div className="max-w-7xl mx-auto px-4 max-sm:px-2">
         <div className="text-center mb-16">
           <h2 className="text-4xl max-sm:text-3xl font-bold text-[#fff] mb-4">
-            Our <span className="text-[#d4af37]">Work</span> Speaks
+            Our Work Speaks
           </h2>
           <p className="text-xl text-[#ccc] max-w-2xl mx-auto">
             Experience the artistry and precision that sets North Country Cuts apart
           </p>
         </div>
         
-        {/* Scrollable Gallery */}
-        <div className="relative">
-          {/* Navigation arrows */}
+        {/* Infinite Scrollable Gallery with External Navigation */}
+        <div className="relative max-w-6xl mx-auto">
+          {/* External Navigation arrows */}
           <button
             onClick={scrollLeft}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-2 rounded-full opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110"
+            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl max-md:hidden"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           
           <button
             onClick={scrollRight}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-2 rounded-full opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110"
+            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full opacity-80 hover:opacity-100 transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl max-md:hidden"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
 
-          {/* Scrollable container with infinite animation overlay */}
-          <div className="relative overflow-hidden">
-            {/* Invisible infinite scroll layer for auto-animation */}
-            <div 
-              ref={scrollRef}
-              className={`absolute inset-0 flex gap-6 pointer-events-none ${isVisible && !isPaused ? 'animate-infinite-scroll' : ''}`}
-              style={{ opacity: isDragging ? 0 : 1 }}
-            >
-              {duplicatedItems.map((item, index) => (
-                <div key={`bg-${index}`} className="flex-shrink-0 w-80 h-80 opacity-50" />
-              ))}
-            </div>
-
-            {/* Actual draggable content */}
+          {/* Gallery container with gradient masks */}
+          <div className="relative overflow-hidden rounded-xl">
+            {/* Gradient overlays for smooth fade effect */}
+            <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-[#1a1a1a] to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-[#2a2a2a] to-transparent pointer-events-none z-10" />
+            
+            {/* Infinite scroll container */}
             <div 
               ref={containerRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing px-16"
+              className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing px-32 py-4"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onMouseDown={handleDragStart}
@@ -214,17 +262,14 @@ export default function InfiniteGallery() {
                 msOverflowStyle: 'none'
               }}
             >
-              {duplicatedItems.map((item, index) => {
-                const isSelected = selectedIndex !== null && (
-                  index === selectedIndex || 
-                  index === selectedIndex + galleryItems.length ||
-                  (selectedIndex >= galleryItems.length && index === selectedIndex - galleryItems.length)
-                );
+              {infiniteItems.map((item, index) => {
+                const actualIndex = index % galleryItems.length;
+                const isSelected = selectedIndex !== null && actualIndex === (selectedIndex % galleryItems.length);
                 
                 return (
                   <div
                     key={index}
-                    onClick={() => openModal(item, index)}
+                    onClick={() => openModal(item, actualIndex)}
                     className={`flex-shrink-0 w-80 bg-[#2a2a2a] rounded-2xl border overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl group cursor-pointer ${
                       isSelected 
                         ? 'border-[#d4af37] shadow-2xl shadow-[#d4af37]/40 scale-105' 
@@ -267,6 +312,22 @@ export default function InfiniteGallery() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Mobile navigation hints */}
+          <div className="md:hidden flex justify-center mt-6 gap-4">
+            <button
+              onClick={scrollLeft}
+              className="bg-[#d4af37] text-[#1a1a1a] px-4 py-2 rounded-lg opacity-80 hover:opacity-100 transition-all duration-300"
+            >
+              ← Previous
+            </button>
+            <button
+              onClick={scrollRight}
+              className="bg-[#d4af37] text-[#1a1a1a] px-4 py-2 rounded-lg opacity-80 hover:opacity-100 transition-all duration-300"
+            >
+              Next →
+            </button>
           </div>
         </div>
 
