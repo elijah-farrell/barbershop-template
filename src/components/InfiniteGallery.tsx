@@ -3,17 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 
 export default function InfiniteGallery() {
-  const [isVisible, setIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   // Cleanup: ensure body scroll is restored if component unmounts while modal is open
   useEffect(() => {
