@@ -19,7 +19,7 @@ export default function InfiniteGallery() {
 
   const galleryItems = [
     {
-      image: "/beard-trimming.png",
+      image: "./beard-trimming.png",
       title: "Beard Styling",
       description: "Expert beard trimming and shaping with precision tools and techniques for the perfect look."
     },

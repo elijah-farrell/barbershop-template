@@ -29,7 +29,7 @@ export default function Navigation({ onBookingOpen }: NavigationProps) {
           <div className="flex items-center gap-4">
             <div className="relative group">
               <img 
-                src="/north_country_cuts_logo.svg" 
+                src="./north_country_cuts_logo.svg" 
                 alt="North Country Cuts Logo" 
                 className="h-20 w-20 max-sm:h-14 max-sm:w-14 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 filter drop-shadow-lg group-hover:drop-shadow-2xl group-hover:drop-shadow-[#d4af37]/50"
               />

@@ -7,7 +7,7 @@ export default function AboutSection() {
         <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-12 items-center">
           <div>
             <img
-              src="/barber-tony.png"
+              src="./barber-tony.png"
               className="w-full rounded-2xl shadow-2xl"
               alt="Master Barber Tony"
             />
