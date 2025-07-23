@@ -8,9 +8,9 @@ export default function InfiniteGallery() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState(0);
-  const [dragOffset, setDragOffset] = useState(0);
+  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsVisible(true);
@@ -63,20 +63,15 @@ export default function InfiniteGallery() {
     setSelectedItem(null);
     setSelectedIndex(null);
     setIsPaused(false);
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = 'running';
-    }
     // Restore page scroll when modal closes
     document.body.style.overflow = 'unset';
   };
 
   const openModal = (item: any, index: number) => {
+    if (isDragging) return; // Don't open modal if we're dragging
     setSelectedItem(item);
     setSelectedIndex(index);
     setIsPaused(true);
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = 'paused';
-    }
     // Prevent page scroll when modal is open
     document.body.style.overflow = 'hidden';
   };
@@ -94,84 +89,64 @@ export default function InfiniteGallery() {
   }, [selectedItem]);
 
   const handleMouseEnter = () => {
-    // Only pause on hover if modal is not open and not dragging
     if (!selectedItem && !isDragging) {
       setIsPaused(true);
-      if (scrollRef.current) {
-        scrollRef.current.style.animationPlayState = 'paused';
-      }
     }
   };
 
   const handleMouseLeave = () => {
-    // Only resume on mouse leave if modal is not open and not dragging
     if (!selectedItem && !isDragging) {
       setIsPaused(false);
-      if (scrollRef.current) {
-        scrollRef.current.style.animationPlayState = 'running';
-      }
     }
   };
 
-  // Drag functionality
+  // Improved drag functionality
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
     setIsPaused(true);
+    
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    setDragStart(clientX);
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = 'paused';
-    }
+    const scrollLeft = containerRef.current?.scrollLeft || 0;
+    
+    setDragStart({
+      x: clientX,
+      scrollLeft: scrollLeft
+    });
   };
 
   const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !containerRef.current) return;
+    
+    e.preventDefault();
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const offset = clientX - dragStart;
-    setDragOffset(offset);
-    if (scrollRef.current) {
-      scrollRef.current.style.transform = `translateX(${offset}px)`;
-    }
+    const walk = (clientX - dragStart.x) * 2; // Multiply by 2 for faster scrolling
+    containerRef.current.scrollLeft = dragStart.scrollLeft - walk;
   };
 
   const handleDragEnd = () => {
-    if (!isDragging) return;
     setIsDragging(false);
-    
-    // Reset transform and resume animation
-    if (scrollRef.current) {
-      scrollRef.current.style.transform = '';
-      scrollRef.current.style.animationPlayState = 'running';
-    }
-    
-    setDragOffset(0);
-    setIsPaused(false);
+    // Small delay before allowing pause to resume
+    setTimeout(() => {
+      setIsPaused(false);
+    }, 100);
   };
 
-  // Navigation arrows functionality
+  // Proper arrow navigation
   const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = 'paused';
-      scrollRef.current.style.transform = 'translateX(100px)';
-      setTimeout(() => {
-        if (scrollRef.current) {
-          scrollRef.current.style.transform = '';
-          scrollRef.current.style.animationPlayState = 'running';
-        }
-      }, 300);
+    if (containerRef.current) {
+      containerRef.current.scrollBy({
+        left: -400, // Scroll by roughly one card width
+        behavior: 'smooth'
+      });
     }
   };
 
   const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.style.animationPlayState = 'paused';
-      scrollRef.current.style.transform = 'translateX(-100px)';
-      setTimeout(() => {
-        if (scrollRef.current) {
-          scrollRef.current.style.transform = '';
-          scrollRef.current.style.animationPlayState = 'running';
-        }
-      }, 300);
+    if (containerRef.current) {
+      containerRef.current.scrollBy({
+        left: 400, // Scroll by roughly one card width
+        behavior: 'smooth'
+      });
     }
   };
 
@@ -187,9 +162,9 @@ export default function InfiniteGallery() {
           </p>
         </div>
         
-        {/* Infinite Scrolling Gallery */}
+        {/* Scrollable Gallery */}
         <div className="relative">
-          {/* Small navigation arrows */}
+          {/* Navigation arrows */}
           <button
             onClick={scrollLeft}
             className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-[#d4af37] text-[#1a1a1a] p-2 rounded-full opacity-70 hover:opacity-100 transition-all duration-300 hover:scale-110"
@@ -208,10 +183,23 @@ export default function InfiniteGallery() {
             </svg>
           </button>
 
-          <div className="flex overflow-hidden mask-gradient">
+          {/* Scrollable container with infinite animation overlay */}
+          <div className="relative overflow-hidden">
+            {/* Invisible infinite scroll layer for auto-animation */}
             <div 
               ref={scrollRef}
-              className={`flex gap-6 ${isVisible ? 'animate-infinite-scroll' : ''} transition-transform duration-300 cursor-grab active:cursor-grabbing`}
+              className={`absolute inset-0 flex gap-6 pointer-events-none ${isVisible && !isPaused ? 'animate-infinite-scroll' : ''}`}
+              style={{ opacity: isDragging ? 0 : 1 }}
+            >
+              {duplicatedItems.map((item, index) => (
+                <div key={`bg-${index}`} className="flex-shrink-0 w-80 h-80 opacity-50" />
+              ))}
+            </div>
+
+            {/* Actual draggable content */}
+            <div 
+              ref={containerRef}
+              className="flex gap-6 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing px-16"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onMouseDown={handleDragStart}
@@ -220,7 +208,11 @@ export default function InfiniteGallery() {
               onTouchStart={handleDragStart}
               onTouchMove={handleDragMove}
               onTouchEnd={handleDragEnd}
-              style={{ userSelect: 'none' }}
+              style={{ 
+                userSelect: 'none',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none'
+              }}
             >
               {duplicatedItems.map((item, index) => {
                 const isSelected = selectedIndex !== null && (
@@ -276,10 +268,6 @@ export default function InfiniteGallery() {
               })}
             </div>
           </div>
-          
-          {/* Gradient overlays for smooth edges */}
-          <div className="absolute left-0 top-0 w-32 h-full bg-gradient-to-r from-[#1a1a1a] to-transparent pointer-events-none z-10" />
-          <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-[#2a2a2a] to-transparent pointer-events-none z-10" />
         </div>
 
         {/* Floating elements for extra flair */}
