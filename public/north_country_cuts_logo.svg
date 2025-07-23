@@ -1,0 +1,39 @@
+<svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main circle background -->
+  <circle cx="400" cy="400" r="360" fill="#1a1a1a" stroke="#d4af37" stroke-width="12"/>
+  <circle cx="400" cy="400" r="320" fill="none" stroke="#d4af37" stroke-width="4" opacity="0.3"/>
+  
+  <!-- Large barber pole center -->
+  <g transform="translate(400, 280)">
+    <!-- Pole body -->
+    <rect x="-30" y="0" width="60" height="240" fill="#f5f5f5" rx="30"/>
+    <!-- Red diagonal stripes -->
+    <g stroke="#c41e3a" stroke-width="8" fill="none">
+      <path d="M-24 30 Q0 20 24 30 M-24 70 Q0 60 24 70 M-24 110 Q0 100 24 110 M-24 150 Q0 140 24 150 M-24 190 Q0 180 24 190"/>
+    </g>
+    <!-- Blue diagonal stripes -->
+    <g stroke="#1a4480" stroke-width="8" fill="none">
+      <path d="M-24 50 Q0 40 24 50 M-24 90 Q0 80 24 90 M-24 130 Q0 120 24 130 M-24 170 Q0 160 24 170 M-24 210 Q0 200 24 210"/>
+    </g>
+    <!-- Top cap -->
+    <ellipse cx="0" cy="10" rx="40" ry="16" fill="#d4af37"/>
+    <!-- Bottom cap -->
+    <ellipse cx="0" cy="230" rx="40" ry="16" fill="#d4af37"/>
+  </g>
+  
+<!-- Brand name curved along top -->
+<path id="top-curve" d="M 230 380 A 170 170 0 0 1 570 380" fill="none"/>
+<text font-family="serif" font-size="61" font-weight="bold" fill="#d4af37" letter-spacing="2px">
+  <textPath href="#top-curve" startOffset="50%" text-anchor="middle">NORTH COUNTRY</textPath>
+</text>
+  
+  <!-- Large CUTS text at bottom -->
+  <text x="400" y="640" font-family="serif" font-size="96" font-weight="900" fill="#f5f5f5" text-anchor="middle" letter-spacing="16px">CUTS</text>
+  
+  <!-- Small accent elements -->
+  <g transform="translate(400, 690)" fill="#d4af37">
+    <circle cx="-40" cy="0" r="6"/>
+    <circle cx="0" cy="0" r="6"/>
+    <circle cx="40" cy="0" r="6"/>
+  </g>
+</svg>
