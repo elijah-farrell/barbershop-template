@@ -7,7 +7,7 @@ export default function AboutSection() {
         <div className="grid grid-cols-2 max-lg:grid-cols-1 gap-12 items-center">
           <div>
             <img
-              src="https://placehold.co/600x500/8B4513/FFFFFF?text=Master+Barber+Tony"
+              src="/barber-tony.png"
               className="w-full rounded-2xl shadow-2xl"
               alt="Master Barber Tony"
             />
@@ -17,16 +17,17 @@ export default function AboutSection() {
               Meet Tony, Master Barber
             </h2>
             <p className="text-lg text-[#ccc] mb-6 leading-relaxed">
-              With over 8 years of experience in the barbering industry, Tony
-              brings traditional craftsmanship to modern styling. Trained in
-              classic techniques and constantly evolving with contemporary
-              trends, he ensures every client leaves looking and feeling their
-              best.
+              With over 8 years of dedicated experience in the barbering industry, Tony
+              brings a masterful blend of traditional craftsmanship and contemporary styling
+              techniques. Professionally trained in classic barbering methods and continuously
+              educated in modern trends, he ensures every client receives personalized service
+              tailored to their individual style and preferences.
             </p>
             <p className="text-lg text-[#ccc] mb-8 leading-relaxed">
-              Located in the heart of Watertown, North Country Cuts has become
-              the go-to destination for discerning gentlemen who appreciate
-              quality, attention to detail, and exceptional service.
+              Proudly located in the heart of Watertown, North Country Cuts has established
+              itself as the premier destination for discerning gentlemen who value quality,
+              precision, and exceptional service. Our commitment to excellence and attention
+              to detail has earned us a loyal clientele throughout the North Country region.
             </p>
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-[#2a2a2a] p-6 rounded-xl border border-[#444]">

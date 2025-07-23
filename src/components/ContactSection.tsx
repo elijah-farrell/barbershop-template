@@ -89,9 +89,9 @@ export default function ContactSection({ onBookingOpen }: ContactSectionProps) {
             <p className="text-[#ccc] text-lg">
               Mon-Fri: 9AM-7PM
               <br />
-              Sat: 8AM-5PM
+              Sat: 8AM-6PM
               <br />
-              Sun: Closed
+              Sun: 10AM-4PM
             </p>
           </div>
         </div>

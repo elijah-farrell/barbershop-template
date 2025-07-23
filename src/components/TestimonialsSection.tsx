@@ -6,6 +6,7 @@ interface Testimonial {
   name: string;
   text: string;
   rating: number;
+  location: string;
 }
 
 export default function TestimonialsSection() {
@@ -14,18 +15,21 @@ export default function TestimonialsSection() {
   const testimonials: Testimonial[] = [
     {
       name: "Mike Johnson",
-      text: "Best haircut I've had in years! Professional service and great atmosphere.",
+      text: "Exceptional service and attention to detail. Tony took the time to understand exactly what I wanted and delivered beyond my expectations. The hot towel treatment was the perfect finishing touch.",
       rating: 5,
+      location: "Watertown, NY"
     },
     {
       name: "David Smith",
-      text: "Tony knows his craft. Always leave looking sharp and feeling confident.",
+      text: "I've been a client for over two years now. Tony's expertise in both classic and modern styles is unmatched. Always professional, always delivers consistent quality results.",
       rating: 5,
+      location: "Fort Drum, NY"
     },
     {
       name: "Robert Wilson",
-      text: "Been coming here for 3 years. Consistent quality every time.",
+      text: "From the moment you walk in, you know you're in a professional establishment. Clean, comfortable environment and Tony's skill with both scissors and straight razor is impressive.",
       rating: 5,
+      location: "Clayton, NY"
     },
   ];
 
@@ -56,7 +60,7 @@ export default function TestimonialsSection() {
           </h2>
           <p className="text-xl text-[#ccc]">Don't just take our word for it</p>
         </div>
-        <div className="relative max-w-4xl mx-auto">
+        <div className="relative max-w-4xl mx-auto px-16 max-sm:px-12">
           <div className="bg-[#1a1a1a] rounded-2xl p-8 border border-[#444] text-center">
             <div className="flex justify-center mb-4">
               {[...Array(5)].map((_, i) => (
@@ -76,10 +80,13 @@ export default function TestimonialsSection() {
             <p className="text-lg font-semibold text-[#d4af37]">
               {testimonials[testimonialIndex].name}
             </p>
+            <p className="text-sm text-[#888] mt-1">
+              {testimonials[testimonialIndex].location}
+            </p>
           </div>
           <button
             onClick={prevTestimonial}
-            className="absolute left-4 max-sm:left-0 top-1/2 transform -translate-y-1/2 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full transition-all duration-200 hover:bg-[#b8941f]"
+            className="absolute left-0 max-sm:left-0 top-1/2 transform -translate-y-1/2 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full transition-all duration-200 hover:bg-[#b8941f] z-10"
           >
             <svg
               className="w-6 h-6"
@@ -97,7 +104,7 @@ export default function TestimonialsSection() {
           </button>
           <button
             onClick={nextTestimonial}
-            className="absolute right-4 max-sm:right-0 top-1/2 transform -translate-y-1/2 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full transition-all duration-200 hover:bg-[#b8941f]"
+            className="absolute right-0 max-sm:right-0 top-1/2 transform -translate-y-1/2 bg-[#d4af37] text-[#1a1a1a] p-3 rounded-full transition-all duration-200 hover:bg-[#b8941f] z-10"
           >
             <svg
               className="w-6 h-6"
